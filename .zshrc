@@ -105,7 +105,8 @@ export PATH="$HOME/.tmuxifier/bin:$PATH"
 eval "$(tmuxifier init -)"
 
 # bun completions
-[ -s "/home/anurag-xo/.bun/_bun" ] && source "/home/anurag-xo/.bun/_bun"
+# [ -s "/home/anurag-xo/.bun/_bun" ] && source "/home/anurag-xo/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"

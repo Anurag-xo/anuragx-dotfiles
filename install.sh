@@ -7,27 +7,23 @@ echo "🚀 Setting up dotfiles..."
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
 REPO_URL="${DOTFILES_REPO:-https://github.com/anuragx/dotfiles.git}"
 
-# Clone if not exists
+# Clone or update
 if [ ! -d "$DOTFILES_DIR" ]; then
   git clone "$REPO_URL" "$DOTFILES_DIR"
 else
   echo "✅ Dotfiles already cloned"
+  git -C "$DOTFILES_DIR" pull --ff-only
 fi
 
-# Source all scripts
+# Enter dotfiles dir
 cd "$DOTFILES_DIR"
 
-# Install packages
+# Run setup scripts
 ./scripts/packages.sh
-
-# Create symlinks
 ./scripts/links.sh
-
-# Setup Neovim
 ./scripts/nvim.sh
-
-# Setup Tmux
 ./scripts/tmux.sh
+./scripts/yazi.sh  # ✅ Added missing call
 
 echo "✅ Dotfiles setup complete!"
 echo "💡 Run 'exec zsh' to reload shell"
