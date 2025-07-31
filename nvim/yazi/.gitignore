@@ -1,0 +1,11 @@
+target/
+yazi-config/completions
+
+.DS_Store
+
+result
+result-*
+.direnv
+
+.idea/
+.vscode/

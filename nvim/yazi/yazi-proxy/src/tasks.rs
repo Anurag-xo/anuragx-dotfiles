@@ -1,0 +1,35 @@
+use std::{borrow::Cow, ffi::OsString};
+
+use tokio::sync::oneshot;
+use yazi_config::open::Opener;
+use yazi_macro::emit;
+use yazi_shared::{Layer, event::Cmd, url::Url};
+
+use crate::options::{OpenWithOpt, ProcessExecOpt};
+
+pub struct TasksProxy;
+
+impl TasksProxy {
+	#[inline]
+	pub fn open_with(opener: Cow<'static, Opener>, cwd: Url, targets: Vec<Url>) {
+		emit!(Call(
+			Cmd::new("open_with").with_any("option", OpenWithOpt { opener, cwd, targets }),
+			Layer::Tasks
+		));
+	}
+
+	#[inline]
+	pub async fn process_exec(opener: Cow<'static, Opener>, cwd: Url, args: Vec<OsString>) {
+		let (tx, rx) = oneshot::channel();
+		emit!(Call(
+			Cmd::new("process_exec").with_any("option", ProcessExecOpt {
+				cwd,
+				opener,
+				args,
+				done: Some(tx)
+			}),
+			Layer::Tasks
+		));
+		rx.await.ok();
+	}
+}

@@ -1,0 +1,48 @@
+[package]
+name        = "yazi-cli"
+version     = "0.4.3"
+edition     = "2021"
+license     = "MIT"
+authors     = [ "sxyazi <sxyazi@gmail.com>" ]
+description = "Yazi command-line interface"
+homepage    = "https://yazi-rs.github.io"
+repository  = "https://github.com/sxyazi/yazi"
+
+[dependencies]
+yazi-boot   = { path = "../yazi-boot", version = "0.4.3" }
+yazi-dds    = { path = "../yazi-dds", version = "0.4.3" }
+yazi-fs     = { path = "../yazi-fs", version = "0.4.3" }
+yazi-macro  = { path = "../yazi-macro", version = "0.4.3" }
+yazi-shared = { path = "../yazi-shared", version = "0.4.3" }
+
+# External dependencies
+anyhow     = { workspace = true }
+clap       = { workspace = true }
+crossterm  = { workspace = true }
+md-5       = { workspace = true }
+serde_json = { workspace = true }
+tokio      = { workspace = true }
+toml_edit  = "0.22.22"
+
+[build-dependencies]
+yazi-shared = { path = "../yazi-shared", version = "0.4.3" }
+
+# External build dependencies
+anyhow                = { workspace = true }
+clap                  = { workspace = true }
+clap_complete         = "4.5.40"
+clap_complete_fig     = "4.5.2"
+clap_complete_nushell = "4.5.4"
+serde_json            = { workspace = true }
+vergen-gitcl          = { version = "1.0.2", features = [ "build" ] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+crossterm = { workspace = true, features = [ "use-dev-tty", "libc" ] }
+
+[[bin]]
+name = "ya"
+path = "src/main.rs"
+
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/v{ version }/yazi-{ target }{ archive-suffix }"
+bin-dir = "yazi-{ target }/{ bin }{ binary-ext }"

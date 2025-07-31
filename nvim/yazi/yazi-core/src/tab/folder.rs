@@ -1,0 +1,197 @@
+use std::mem;
+
+use yazi_config::{LAYOUT, MANAGER};
+use yazi_dds::Pubsub;
+use yazi_fs::{Cha, File, Files, FilesOp, FolderStage, Step};
+use yazi_proxy::ManagerProxy;
+use yazi_shared::{Id, url::{Url, Urn}};
+
+pub struct Folder {
+	pub url:   Url,
+	pub cha:   Cha,
+	pub files: Files,
+	pub stage: FolderStage,
+
+	pub offset: usize,
+	pub cursor: usize,
+
+	pub page:    usize,
+	pub tracing: bool,
+}
+
+impl Default for Folder {
+	fn default() -> Self {
+		Self {
+			url:     Default::default(),
+			cha:     Default::default(),
+			files:   Files::new(MANAGER.show_hidden),
+			stage:   Default::default(),
+			offset:  Default::default(),
+			cursor:  Default::default(),
+			page:    Default::default(),
+			tracing: Default::default(),
+		}
+	}
+}
+
+impl From<&Url> for Folder {
+	fn from(url: &Url) -> Self { Self { url: url.clone(), ..Default::default() } }
+}
+
+impl Folder {
+	pub fn update(&mut self, op: FilesOp) -> bool {
+		let (stage, revision) = (self.stage, self.files.revision);
+		match op {
+			FilesOp::Full(_, _, cha) => {
+				(self.cha, self.stage) = (cha, FolderStage::Loaded);
+			}
+			FilesOp::Part(_, _, ticket) if ticket == self.files.ticket() => {
+				self.stage = FolderStage::Loading;
+			}
+			FilesOp::Done(_, cha, ticket) if ticket == self.files.ticket() => {
+				(self.cha, self.stage) = (cha, FolderStage::Loaded);
+			}
+			FilesOp::IOErr(_, kind) => {
+				(self.cha, self.stage) = (Cha::dummy(), FolderStage::Failed(kind));
+			}
+			_ => {}
+		}
+
+		match op {
+			FilesOp::Full(_, files, _) => self.files.update_full(files),
+			FilesOp::Part(_, files, ticket) => self.files.update_part(files, ticket),
+			FilesOp::Done(..) => {}
+			FilesOp::Size(_, sizes) => self.files.update_size(sizes),
+			FilesOp::IOErr(..) => self.files.update_ioerr(),
+
+			FilesOp::Creating(_, files) => self.files.update_creating(files),
+			FilesOp::Deleting(_, urns) => {
+				let deleted = self.files.update_deleting(urns);
+				self.cursor -= deleted.into_iter().filter(|&i| i < self.cursor).count();
+			}
+			FilesOp::Updating(_, files) => _ = self.files.update_updating(files),
+			FilesOp::Upserting(_, files) => self.files.update_upserting(files),
+		}
+
+		self.arrow(0);
+		(stage, revision) != (self.stage, self.files.revision)
+	}
+
+	pub fn update_pub(&mut self, tab: Id, op: FilesOp) -> bool {
+		let old = self.stage;
+		if !self.update(op) {
+			return false;
+		} else if self.stage != old {
+			Pubsub::pub_from_load(tab, &self.url, self.stage);
+		}
+		true
+	}
+
+	pub fn arrow(&mut self, step: impl Into<Step>) -> bool {
+		let step = step.into() as Step;
+		let mut b = if self.files.is_empty() {
+			(self.cursor, self.offset, self.tracing) = (0, 0, false);
+			false
+		} else if step.is_positive() {
+			self.next(step)
+		} else {
+			self.prev(step)
+		};
+
+		self.tracing |= b;
+		b |= self.squeeze_offset();
+
+		self.sync_page(false);
+		b
+	}
+
+	pub fn hover(&mut self, urn: &Urn) -> bool {
+		if self.hovered().map(|h| h.urn()) == Some(urn) {
+			return false;
+		}
+
+		let new = self.files.position(urn).unwrap_or(self.cursor) as isize;
+		self.arrow(new - self.cursor as isize)
+	}
+
+	#[inline]
+	pub fn repos(&mut self, url: Option<&Urn>) -> bool {
+		if let Some(u) = url { self.hover(u) } else { self.arrow(0) }
+	}
+
+	pub fn sync_page(&mut self, force: bool) {
+		let limit = LAYOUT.get().current.height as usize;
+		if limit == 0 {
+			return;
+		}
+
+		let new = self.cursor / limit;
+		if mem::replace(&mut self.page, new) != new || force {
+			ManagerProxy::update_paged_by(new, &self.url);
+		}
+	}
+
+	fn next(&mut self, step: Step) -> bool {
+		let old = (self.cursor, self.offset);
+		let len = self.files.len();
+
+		let limit = LAYOUT.get().current.height as usize;
+		let scrolloff = (limit / 2).min(MANAGER.scrolloff as usize);
+
+		self.cursor = step.add(self.cursor, limit).min(len.saturating_sub(1));
+		self.offset = if self.cursor < (self.offset + limit).min(len).saturating_sub(scrolloff) {
+			self.offset.min(len.saturating_sub(1))
+		} else {
+			len.saturating_sub(limit).min(self.offset + self.cursor - old.0)
+		};
+
+		old != (self.cursor, self.offset)
+	}
+
+	fn prev(&mut self, step: Step) -> bool {
+		let old = (self.cursor, self.offset);
+		let max = self.files.len().saturating_sub(1);
+
+		let limit = LAYOUT.get().current.height as usize;
+		let scrolloff = (limit / 2).min(MANAGER.scrolloff as usize);
+
+		self.cursor = step.add(self.cursor, limit).min(max);
+		self.offset = if self.cursor < self.offset + scrolloff {
+			self.offset.saturating_sub(old.0 - self.cursor)
+		} else {
+			self.offset.min(max)
+		};
+
+		old != (self.cursor, self.offset)
+	}
+
+	fn squeeze_offset(&mut self) -> bool {
+		let old = self.offset;
+		let len = self.files.len();
+
+		let limit = LAYOUT.get().current.height as usize;
+		let scrolloff = (limit / 2).min(MANAGER.scrolloff as usize);
+
+		self.offset = if self.cursor < (self.offset + limit).min(len).saturating_sub(scrolloff) {
+			len.saturating_sub(limit).min(self.offset)
+		} else {
+			len.saturating_sub(limit).min(self.cursor.saturating_sub(limit) + 1 + scrolloff)
+		};
+
+		old != self.offset
+	}
+}
+
+impl Folder {
+	#[inline]
+	pub fn hovered(&self) -> Option<&File> { self.files.get(self.cursor) }
+
+	pub fn paginate(&self, page: usize) -> &[File] {
+		let len = self.files.len();
+		let limit = LAYOUT.get().current.height as usize;
+
+		let start = (page.saturating_sub(1) * limit).min(len.saturating_sub(1));
+		let end = ((page + 2) * limit).min(len);
+		&self.files[start..end]
+	}
+}

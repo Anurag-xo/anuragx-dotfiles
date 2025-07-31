@@ -1,0 +1,14 @@
+yazi_macro::mod_flat!(
+	accept_payload
+	mouse
+	notify
+	plugin
+	quit
+	reflow
+	render
+	resize
+	resume
+	stop
+	update_notify
+	update_progress
+);

@@ -1,0 +1,33 @@
+[package]
+name        = "yazi-scheduler"
+version     = "0.4.3"
+edition     = "2021"
+license     = "MIT"
+authors     = [ "sxyazi <sxyazi@gmail.com>" ]
+description = "Yazi task scheduler"
+homepage    = "https://yazi-rs.github.io"
+repository  = "https://github.com/sxyazi/yazi"
+
+[dependencies]
+yazi-config = { path = "../yazi-config", version = "0.4.3" }
+yazi-dds    = { path = "../yazi-dds", version = "0.4.3" }
+yazi-fs     = { path = "../yazi-fs", version = "0.4.3" }
+yazi-macro  = { path = "../yazi-macro", version = "0.4.3" }
+yazi-plugin = { path = "../yazi-plugin", version = "0.4.3" }
+yazi-proxy  = { path = "../yazi-proxy", version = "0.4.3" }
+yazi-shared = { path = "../yazi-shared", version = "0.4.3" }
+
+# External dependencies
+anyhow                 = { workspace = true }
+async-priority-channel = "0.2.0"
+futures                = { workspace = true }
+parking_lot            = { workspace = true }
+scopeguard             = { workspace = true }
+tokio                  = { workspace = true }
+tracing                = { workspace = true }
+
+[target."cfg(unix)".dependencies]
+libc = { workspace = true }
+
+[target.'cfg(not(target_os = "android"))'.dependencies]
+trash = "5.2.1"
