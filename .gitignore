@@ -1,0 +1,24 @@
+# Neovim
+.config/nvim/lazy/*
+!.config/nvim/lazy-lock.json
+
+# Cache and temp files
+*.swp
+*.swo
+*.log
+*.tmp
+
+# Shell history
+.zsh_history
+.bash_history
+
+# Tmux
+.tmux.conf.local
+
+# SDKMAN
+.sdkman/archives/*
+.sdkman/tmp/*
+
+# OS-specific
+.DS_Store
+Thumbs.db

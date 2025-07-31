@@ -1,27 +1,38 @@
 #!/bin/bash
-echo "📦 Installing system packages..."
+set -euo pipefail
 
-if command -v apt &> /dev/null; then
+install_macos() {
+  if ! command -v brew &> /dev/null; then
+    echo "📥 Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+  brew install neovim tmux lazygit yazi wezterm zsh git
+}
+
+install_ubuntu() {
   sudo apt update
-  sudo apt install -y \
-    zsh git curl wget build-essential \
-    neovim ripgrep fd-find fzf \
-    tmux nodejs npm yarn \
-    wezterm lazygit
-elif command -v pacman &> /dev/null; then
-  sudo pacman -Syu --noconfirm \
-    zsh git curl wget base-devel \
-    neovim ripgrep fd fzf \
-    tmux nodejs npm yarn \
-    wezterm lazygit
-elif command -v brew &> /dev/null; then
-  brew install zsh git ripgrep fd fzf tmux wezterm lazygit node yarn
-fi
+  sudo apt install -y neovim tmux lazygit zsh git curl
+}
 
-# Install Yazi (Rust-based) - via cargo
-if ! command -v yazi &> /dev/null; then
-  echo "🔧 Installing Yazi..."
-  curl -fsSL https://get.yazi.rs | bash
-fi
+install_arch() {
+  sudo pacman -Syu --noconfirm neovim tmux lazygit yazi wezterm zsh git
+}
 
-echo "✅ Packages installed."
+# Detect OS
+case "$OSTYPE" in
+  darwin*)  install_macos ;;
+  linux*)
+    if [ -f /etc/os-release ]; then
+      . /etc/os-release
+      case "$ID" in
+        ubuntu|debian) install_ubuntu ;;
+        arch|manjaro)  install_arch ;;
+        *) echo "Unsupported Linux distro" && exit 1 ;;
+      esac
+    else
+      echo "Could not detect Linux distro"
+      exit 1
+    fi
+    ;;
+  *) echo "Unsupported OS" && exit 1 ;;
+esac

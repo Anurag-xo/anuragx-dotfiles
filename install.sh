@@ -1,24 +1,33 @@
 #!/bin/bash
-# FILE: install.sh
 set -euo pipefail
 
-echo "🚀 Bootstrapping your system..."
+echo "🚀 Setting up dotfiles..."
 
-DOTFILES_DIR="$HOME/.dotfiles"
-REPO_URL="https://github.com/anuragx/dotfiles.git"  # Update with your actual URL
+# Allow override
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+REPO_URL="${DOTFILES_REPO:-https://github.com/anuragx/dotfiles.git}"
 
-# Clone dotfiles
+# Clone if not exists
 if [ ! -d "$DOTFILES_DIR" ]; then
   git clone "$REPO_URL" "$DOTFILES_DIR"
 else
-  git -C "$DOTFILES_DIR" pull
+  echo "✅ Dotfiles already cloned"
 fi
 
-# Run setup scripts
-"$DOTFILES_DIR/scripts/packages.sh"
-"$DOTFILES_DIR/scripts/link.sh"
-"$DOTFILES_DIR/scripts/shell.sh"
-"$DOTFILES_DIR/scripts/nvim.sh"
-"$DOTFILES_DIR/scripts/yazi.sh"
+# Source all scripts
+cd "$DOTFILES_DIR"
 
-echo "✅ Dotfiles installed! Restart your shell with: exec \$SHELL"
+# Install packages
+./scripts/packages.sh
+
+# Create symlinks
+./scripts/links.sh
+
+# Setup Neovim
+./scripts/nvim.sh
+
+# Setup Tmux
+./scripts/tmux.sh
+
+echo "✅ Dotfiles setup complete!"
+echo "💡 Run 'exec zsh' to reload shell"
