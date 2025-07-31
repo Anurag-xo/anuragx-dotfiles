@@ -1,2 +1,2 @@
-require("anurag-file")
+require("anurag")
 print("hello")
