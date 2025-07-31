@@ -4,7 +4,7 @@ set -euo pipefail
 echo "🚀 Setting up dotfiles..."
 
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
-REPO_URL="${DOTFILES_REPO:-https://github.com/anuragx/dotfiles.git}"
+REPO_URL="${DOTFILES_REPO:-https://github.com/Anurag-xo/dotfiles.git}"
 
 if [ ! -d "$DOTFILES_DIR" ]; then
   git clone "$REPO_URL" "$DOTFILES_DIR"
