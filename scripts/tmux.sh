@@ -11,3 +11,12 @@ else
 fi
 
 echo "💡 Run 'Prefix + I' in Tmux to install plugins"
+
+# Start a temporary tmux server to install plugins
+echo "⚙️ Installing Tmux plugins..."
+tmux start-server
+tmux new-session -d
+"$TPM_DIR/bin/install_plugins"
+tmux kill-server
+
+echo "✅ Tmux plugins installed."
