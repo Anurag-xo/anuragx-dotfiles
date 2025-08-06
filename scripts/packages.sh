@@ -15,7 +15,7 @@ install_ubuntu() {
   curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
   echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
   sudo apt update
-  sudo apt install -y neovim tmux lazygit zsh nodejs npm wezterm cargo ripgrep build-essential
+  sudo apt install -y neovim tmux zsh nodejs npm wezterm cargo ripgrep build-essential
   cargo install --locked yazi
 }
 
