@@ -6,16 +6,21 @@ install_macos() {
     echo "📥 Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
-  brew install neovim tmux lazygit yazi wezterm zsh git
+  brew install neovim tmux lazygit yazi wezterm zsh git node ripgrep
 }
 
 install_ubuntu() {
   sudo apt update
-  sudo apt install -y neovim tmux lazygit zsh git curl
+  sudo apt install -y curl git
+  curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
+  echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
+  sudo apt update
+  sudo apt install -y neovim tmux lazygit zsh nodejs npm wezterm cargo ripgrep build-essential
+  cargo install --locked yazi
 }
 
 install_arch() {
-  sudo pacman -Syu --noconfirm neovim tmux lazygit yazi wezterm zsh git
+  sudo pacman -Syu --noconfirm neovim tmux lazygit yazi wezterm zsh git nodejs npm ripgrep
 }
 
 # Detect OS
