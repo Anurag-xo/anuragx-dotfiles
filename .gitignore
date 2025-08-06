@@ -1,24 +1,33 @@
-# Neovim
-.config/nvim/lazy/*
-!.config/nvim/lazy-lock.json
+# Backup files created by the link script
+*.bak
 
-# Cache and temp files
-*.swp
-*.swo
-*.log
-*.tmp
+# OS-specific files
+.DS_Store
+Thumbs.db
 
-# Shell history
-.zsh_history
+# Shell history files
 .bash_history
+.zsh_history
+
+# Local state and cache
+.cache/
+.local/
+/node_modules/
+/yarn.lock
+
+# Neovim
+.config/nvim/lazy/
+!.config/nvim/lazy-lock.json
+.config/nvim/.netrwhist
+.config/nvim/shada/
+.viminfo
 
 # Tmux
 .tmux.conf.local
 
-# SDKMAN
-.sdkman/archives/*
-.sdkman/tmp/*
+# Yazi
+.config/yazi/history.yml
+.config/yazi/tasks.yml
 
-# OS-specific
-.DS_Store
-Thumbs.db
+# Environment variables
+.env
