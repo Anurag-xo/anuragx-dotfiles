@@ -1,16 +1,13 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "🚀 Setting up dotfiles..."
+echo "🚀 Setting up dotfiles from local directory..."
 
-DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
-REPO_URL="${DOTFILES_REPO:-https://github.com/Anurag-xo/dotfiles.git}"
+# Add cargo to PATH for this script's execution
+export PATH="$HOME/.cargo/bin:$PATH"
 
-if [ ! -d "$DOTFILES_DIR" ]; then
-  git clone "$REPO_URL" "$DOTFILES_DIR"
-else
-  git -C "$DOTFILES_DIR" pull --ff-only
-fi
+# Get the directory of the install script
+DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 cd "$DOTFILES_DIR"
 
