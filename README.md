@@ -1,6 +1,6 @@
 # My Dotfiles
 
-This repository contains my personal dotfiles for various applications, managed with a custom installation script.
+This repository contains my personal dotfiles for various applications, managed with a custom installation script and `chezmoi`.
 
 ## Structure
 
@@ -25,8 +25,18 @@ To install these dotfiles, run the following command:
 The script will:
 
 1.  Ask for your `sudo` password to install packages.
-2.  Install the packages listed in `scripts/packages.sh`.
+2.  Install the packages listed in `scripts/packages.sh`, including `chezmoi`.
 3.  Create symbolic links for the dotfiles in your home directory and `~/.config` directory.
+
+## `chezmoi`
+
+This repository uses `chezmoi` to manage the dotfiles. The `install.sh` script will install `chezmoi` for you. While the `install.sh` script handles the initial setup, you can use `chezmoi` to manage your dotfiles going forward.
+
+For example, to apply any changes you've made to your dotfiles, you can run:
+
+```bash
+chezmoi apply
+```
 
 ## Customization
 
