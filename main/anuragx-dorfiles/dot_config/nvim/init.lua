@@ -1,2 +1,0 @@
-require("anurag")
-print("hello")
