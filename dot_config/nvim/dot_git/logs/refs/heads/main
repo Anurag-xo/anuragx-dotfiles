@@ -1,0 +1,17 @@
+0000000000000000000000000000000000000000 36cf23ac05b88ca2dbbe446d2a8bde570f89df9a Anurag-xo <amnrag889@gmail.com> 1748078584 +0000	commit (initial): first commit
+36cf23ac05b88ca2dbbe446d2a8bde570f89df9a 36cf23ac05b88ca2dbbe446d2a8bde570f89df9a Anurag-xo <amnrag889@gmail.com> 1748078589 +0000	Branch: renamed refs/heads/main to refs/heads/main
+36cf23ac05b88ca2dbbe446d2a8bde570f89df9a 5f64bfe1acd259df30d651da527386fa98a5c03b Anurag-xo <amnrag889@gmail.com> 1748078651 +0000	commit: final config
+5f64bfe1acd259df30d651da527386fa98a5c03b 9a61ddcc296d580ff7b43d655a550f82e47b7603 Anurag-xo <amnrag889@gmail.com> 1748079629 +0000	commit: update README.md
+9a61ddcc296d580ff7b43d655a550f82e47b7603 67c21fc2a89c50b8d4044f60b153cced93720bed Anurag-xo <amnrag889@gmail.com> 1748079864 +0000	commit: update README.md
+67c21fc2a89c50b8d4044f60b153cced93720bed 849a3d85255540a9ccb16682bba8a892ac4e682c Anurag-xo <amnrag889@gmail.com> 1748180268 +0000	commit: add java Lsp and fix linting
+849a3d85255540a9ccb16682bba8a892ac4e682c fa366d458705bd69952390fb32498ebdb81c0b7c Anurag-xo <amnrag889@gmail.com> 1750873313 +0000	commit: java LSP
+fa366d458705bd69952390fb32498ebdb81c0b7c a55957d02d804825fa1dd01de4a359f27cabe1d4 Anurag-xo <amnrag889@gmail.com> 1750885053 +0000	commit: fix jdtls #1
+a55957d02d804825fa1dd01de4a359f27cabe1d4 f64babf9cb8c97a9def539065ec68942d44c6d53 Anurag-xo <amnrag889@gmail.com> 1751226219 +0000	commit: add new plugins and features (update v1.1)
+f64babf9cb8c97a9def539065ec68942d44c6d53 73c133da8f688e690585858e6992f3ecc0b946c5 Anurag-xo <amnrag889@gmail.com> 1751476519 +0000	commit: list key bindings
+73c133da8f688e690585858e6992f3ecc0b946c5 b377a3cbd1efb238dd1414eb02e9416f59c4ffb2 Anurag-xo <amnrag889@gmail.com> 1751476581 +0000	commit: performance optimization
+b377a3cbd1efb238dd1414eb02e9416f59c4ffb2 833a616925a428ee03d7bb04fb64e86ea6a419e9 Anurag-xo <amnrag889@gmail.com> 1753042133 +0000	commit: add: fTerm plugin
+833a616925a428ee03d7bb04fb64e86ea6a419e9 5288ee494087669badc8669affa5be2b02416f22 Anurag-xo <amnrag889@gmail.com> 1753042856 +0000	commit: fix: jdkt slow loading & run of the workspace it is on
+5288ee494087669badc8669affa5be2b02416f22 ada6af1f33dbc194b112ab42cc41bd025d01c0fd Anurag-xo <amnrag889@gmail.com> 1753043209 +0000	commit: feature: render-markdown.nvim plugin
+ada6af1f33dbc194b112ab42cc41bd025d01c0fd f36d54845bba3229fb67b0abebb1095aa98fde60 Anurag-xo <amnrag889@gmail.com> 1753043226 +0000	commit: feature: render-markdown plugin add
+f36d54845bba3229fb67b0abebb1095aa98fde60 2b3ce45ddba132fa2be00962b690e99bbf9b208a Anurag-xo <amnrag889@gmail.com> 1754235587 +0000	commit: add: wakatime integration
+2b3ce45ddba132fa2be00962b690e99bbf9b208a 0618ffcc9025b8abb905407a8b4bffe33954bd80 Anurag-xo <amnrag889@gmail.com> 1754235619 +0000	commit: update: init
