@@ -1,146 +1,70 @@
-# My Dotfiles
+# Anurag's Dotfiles
 
-This repository contains my personal dotfiles, managed by [`chezmoi`](https://chezmoi.io). It allows for quick and easy setup of a new machine.
+These are my personal dotfiles, designed to be portable and easy to set up on a new machine. They provide a consistent development environment across different systems.
 
-## Prerequisites
+## What's Included?
 
-Before you begin, ensure you have the following installed on your new machine:
+This setup configures the following tools:
 
-*   `git`: To clone the repository.
-*   `chezmoi`: To manage the dotfiles.
-
-You can typically install these with your system's package manager. For example, on a Debian-based system:
-
-```bash
-sudo apt-get update
-sudo apt-get install git chezmoi
-```
+- **Shell**: Zsh with a custom configuration, powered by `zinit` for plugin management.
+- **Terminal**: WezTerm with a custom theme and keybindings.
+- **Multiplexer**: Tmux with a custom configuration for session management.
+- **Editor**: Neovim with a modern, LSP-powered configuration based on LazyVim.
+- **File Manager**: Yazi for a fast, terminal-based file navigation experience.
+- **Git**: Lazygit for an interactive and user-friendly git interface.
+- **Package Management**: An installation script that supports Arch Linux, Debian-based systems, and macOS.
 
 ## Installation
 
-1.  **Initialize `chezmoi` with this repository:**
+Setting up these dotfiles on a new machine is a simple, automated process.
 
-    This command will clone the repository and initialize `chezmoi` with it.
+### Prerequisites
 
-    ```bash
-    chezmoi init https://github.com/your-username/your-dotfiles-repo.git
-    ```
+Before you begin, ensure you have the following tools installed:
 
-    Replace `https://github.com/your-username/your-dotfiles-repo.git` with the actual URL of this repository.
+- `git`
+- `curl`
 
-2.  **Apply the dotfiles:**
+These are typically pre-installed on most Linux distributions and macOS.
 
-    This command will create the symbolic links and apply the configurations to your home directory.
+### Setup Command
 
-    ```bash
-    chezmoi apply
-    ```
+Run the following command in your terminal to install and apply the dotfiles:
 
-## Package Management
-
-This repository is set up to handle package installation, but it requires some manual configuration.
-
-1.  **Create a package installation script:**
-
-    Create a file named `install-packages.sh` in the `.chezmoi.d/run_once` directory. This script will be executed by `chezmoi` only once, when you first set up your machine.
-
-    ```bash
-mkdir -p ~/.local/share/chezmoi/.chezmoi.d/run_once
-touch ~/.local/share/chezmoi/.chezmoi.d/run_once/run_once_install-packages.sh
-chmod +x ~/.local/share/chezmoi/.chezmoi.d/run_once/run_once_install-packages.sh
-    ```
-
-2.  **Add your packages to the script:**
-
-    Open the `run_once_install-packages.sh` file and add the commands to install your desired packages. Here is a template to get you started:
-
-    ```bash
-#!/bin/bash
-
-# Detect package manager
-if command -v apt-get &>/dev/null; then
-  # Debian/Ubuntu
-  sudo apt-get update
-  sudo apt-get install -y \
-    build-essential \
-    neovim \
-    tmux \
-    zsh
-elif command -v dnf &>/dev/null; then
-  # Fedora
-  sudo dnf install -y \
-    neovim \
-    tmux \
-    zsh
-else
-  echo "Unsupported package manager. Please install packages manually."
-fi
-    ```
-
-3.  **Run `chezmoi apply` again:**
-
-    `chezmoi` will detect the new script and execute it.
-
-    ```bash
-    chezmoi apply
-    ```
-
-## Secrets Management
-
-This repository uses `chezmoi`'s templating feature to manage secrets, such as the `GEMINI_API_KEY`.
-
-The `.zshrc` file contains the following template:
-
-```
-{{- if (and (stat (joinPath .chezmoi.homeDir ".config" "gcloud" "application_default_credentials.json"))) }}
-export GEMINI_API_KEY=$(gcloud auth application-default print-access-token)
-{{- end }}
+```bash
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply anurag-xo
 ```
 
-To make this work, you need to:
+This single command performs the following steps:
 
-1.  **Install the Google Cloud CLI:**
+1.  **Installs `chezmoi`**: A powerful tool for managing dotfiles across multiple machines.
+2.  **Clones the repository**: Downloads this dotfiles repository to `~/.local/share/chezmoi`.
+3.  **Applies the dotfiles**: Symlinks the configuration files to your home directory.
+4.  **Installs packages**: Runs the `install.sh` script to install all the necessary applications and tools for your operating system.
 
-    Follow the official instructions to install the `gcloud` CLI on your system.
+### Post-Installation Steps
 
-2.  **Authenticate with Google Cloud:**
+After the installation script finishes, you should:
 
-    Run the following command and follow the instructions to log in to your Google account:
-
-    ```bash
-    gcloud auth application-default login
-    ```
-
-    This will create the `application_default_credentials.json` file, and the template in your `.zshrc` will then be able to export the `GEMINI_API_KEY`.
+1.  **Restart your terminal**: This will ensure that all the new settings, especially for Zsh, are loaded correctly.
+2.  **Open Neovim**: The first time you run `nvim`, the Lazy.nvim plugin manager will automatically install all the configured plugins.
+3.  **Start a Zsh session**: Run `zsh` to allow `zinit` to initialize and install any Zsh plugins.
 
 ## Customization
 
-To add new dotfiles or modify existing ones, use the `chezmoi` command.
+To make local changes to your dotfiles, you can use the `chezmoi` command. This allows you to edit the source files, and `chezmoi` will handle the symlinking.
 
-*   **Add a new file:**
+- `chezmoi edit <file>`: Edit a file in your `chezmoi` source directory. For example, `chezmoi edit .zshrc`.
+- `chezmoi cd`: Open a shell in your `chezmoi` source directory (`~/.local/share/chezmoi`).
+- `chezmoi apply`: Apply your changes to the target directory (your home directory).
 
-    ```bash
-    chezmoi add ~/.new-config-file
-    ```
+After making changes, commit them to your git repository to make them available on other machines.
 
-*   **Edit a file:**
+## Repository Structure
 
-    ```bash
-    chezmoi edit ~/.config-file-to-edit
-    ```
+The repository is organized as follows:
 
-    This will open the file in your default editor. After you save and close the file, the changes will be stored in the `chezmoi` source directory.
-
-*   **Apply your changes:**
-
-    ```bash
-    chezmoi apply
-    ```
-
-## Troubleshooting
-
-If you encounter issues with `chezmoi` automatically trying to run installation scripts, you can try the following:
-
-*   Create a `.chezmoiignore` file in the root of the repository and add the names of any scripts you want `chezmoi` to ignore.
-*   Create an empty `run_once_install-packages.sh` script in the `.chezmoi.d/run_once` directory to prevent `chezmoi` from running its own package installation scripts.
-*   Create an empty `install-packages.sh` file in a `.chezmoitemplates` directory to override the built-in template.
+- `.config/`: Contains configuration files for tools like Neovim (`nvim`) and Yazi.
+- `scripts/`: Holds helper scripts for installation, package management, and symlinking.
+- `install.sh`: The main installation script that sets up the environment.
+- Other files in the root directory (e.g., `.zshrc`, `.tmux.conf`) are the configuration files for various tools.
