@@ -122,7 +122,6 @@ export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 # Gemini Plugin
-export GEMINI_API_KEY="AIzaSyAW6UqYJIvo87rxMPYsEfGzz3CtlakkXCo"
 
 # pnpm
 export PNPM_HOME="/home/anurag-xo/.local/share/pnpm"
